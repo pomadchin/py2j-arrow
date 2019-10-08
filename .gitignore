@@ -42,3 +42,7 @@ java/data
 java/*.dylib
 java/*.so
 java/*dll
+
+# Python venv
+
+venv/*
