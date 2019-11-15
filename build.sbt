@@ -32,7 +32,7 @@ lazy val commonSettings = Seq(
   shellPrompt := { s => Project.extract(s).currentProject.id + " > " }
 )
 
-lazy val root = Project("geotrellis-contrib", file("."))
+lazy val root = Project("py2j-arrow", file("."))
   .aggregate(py4, pyj)
   .settings(commonSettings: _*)
 
@@ -42,4 +42,6 @@ lazy val py4 = project
 
 lazy val pyj = project
   .settings(commonSettings)
+  .settings(javaOptions += s"-Djava.library.path=/usr/local/lib:/usr/local/lib/python3.7/site-packages/jep")
+  // You also need to run pip install jep
   .settings(libraryDependencies += "black.ninia" % "jep" % "3.9.0")
