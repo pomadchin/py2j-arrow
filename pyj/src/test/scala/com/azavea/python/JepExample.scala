@@ -1,11 +1,12 @@
 package com.azavea.python
 
 import jep._
-
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 
+import com.azavea.table.{IntArrayTile, IntArrowTile}
 import org.scalatest._
+import spire.syntax.cfor.cfor
 
 class JepExample
   extends FunSpec
@@ -89,6 +90,24 @@ class JepExample
 
       value shouldBe 700
       x4Value shouldBe 800
+    }
+
+    it("python ArrowTile example") {
+      jep.runScript("src/test/resources/python/table.py")
+
+      val tile = IntArrowTile((0 to 8).toArray, 3, 3)
+
+      val bufferSize = 360 // I'm wodnering how to compute it?
+      val buffer = tile.toDirectArrowBuffer(bufferSize)
+      val nd: DirectNDArray[ByteBuffer] = new DirectNDArray[ByteBuffer](buffer, bufferSize)
+
+      // make it visible for interpreter
+      jep.set("bytes", nd)
+      jep.eval(s"result = arrow_test(bytes)")
+
+      val result = jep.getValue("result").asInstanceOf[String]
+
+      result shouldBe "Finished!"
     }
 
     ignore("keras example") {

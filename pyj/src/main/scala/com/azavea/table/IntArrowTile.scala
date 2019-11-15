@@ -8,8 +8,10 @@ import org.apache.arrow.memory.RootAllocator
 import org.apache.arrow.vector.ipc.ArrowStreamWriter
 import org.apache.arrow.vector.types.pojo.{Field, Schema}
 import org.apache.arrow.vector.ipc.ArrowStreamReader
-
 import java.io._
+import java.nio.ByteBuffer
+
+import com.azavea.util.ByteBufferedOutputStream
 
 import scala.collection.JavaConverters._
 
@@ -39,6 +41,16 @@ class IntArrowTile(val array: IntVector, val cols: Int, val rows: Int) {
     writer.writeBatch
     writer.end()
     buffer.toByteArray
+  }
+
+  def toDirectArrowBuffer(size: Int): ByteBuffer = {
+    val buffer = new ByteBufferedOutputStream(size)
+    val writer = new ArrowStreamWriter(schema, null, buffer)
+    writer.start()
+    // TODO: paging! at this point everything is a single batch
+    writer.writeBatch
+    writer.end()
+    buffer.buffer()
   }
 
   def get(col: Int, row: Int): Int = array.get(row * cols + col)
