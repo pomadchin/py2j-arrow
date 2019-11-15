@@ -96,8 +96,7 @@ class JepExample
       jep.runScript("src/test/resources/python/table.py")
 
       val tile = IntArrowTile((0 to 8).toArray, 3, 3)
-
-      val bufferSize = 360 // I'm wodnering how to compute it?
+      val bufferSize = tile.estimatedSize // 1 << 30 // 360 // we can use Int.MaxValue by default //  I'm wodnering how to compute it?
       val buffer = tile.toDirectArrowBuffer(bufferSize)
       val nd: DirectNDArray[ByteBuffer] = new DirectNDArray[ByteBuffer](buffer, bufferSize)
 

@@ -33,6 +33,14 @@ class IntArrowTile(val array: IntVector, val cols: Int, val rows: Int) {
     arr
   }
 
+  def estimatedSize: Int = {
+    val buffer = new ByteArrayOutputStream
+    val writer = new ArrowStreamWriter(schema, null, buffer)
+    writer.start()
+    writer.end()
+    buffer.toByteArray.length * array.getBuffers(false).length + 100
+  }
+
   def toArrowBytes: Array[Byte] = {
     val buffer = new ByteArrayOutputStream
     val writer = new ArrowStreamWriter(schema, null, buffer)
@@ -43,7 +51,7 @@ class IntArrowTile(val array: IntVector, val cols: Int, val rows: Int) {
     buffer.toByteArray
   }
 
-  def toDirectArrowBuffer(size: Int): ByteBuffer = {
+  def toDirectArrowBuffer(size: Int = 1 << 30): ByteBuffer = {
     val buffer = new ByteBufferedOutputStream(size)
     val writer = new ArrowStreamWriter(schema, null, buffer)
     writer.start()
